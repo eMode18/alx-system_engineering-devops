@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# Displays numbers from 1 to 20 as well as: 
+# "bad luck from China" on the 4th loop iteration 
+# "bad luck from Japan" on the 9th loop iteration and 
+# "bad luck from Italy" on the 17th loop iteration
+
+
+tally=1
+
+while [ $tally -le 20 ]
+do
+  echo "$tally"
+  case $tally in
+    "4") echo "bad luck from China";;
+    "9") echo "bad luck from Japan";;
+    "17") echo "bad luck from Italy";;
+  esac
+  (( tally++ ))
+done

@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# Iterates through 1 to 10 and shows
+# "bad luck" in the fourth iteration 
+# "good luck" in the eighth and 
+# "Best School" for all subsequent iterations
+
+tally=0
+
+while [ $tally -lt 10 ]
+do
+  if [ $tally -eq 3 ]
+  then
+    echo "bad luck"
+  elif [ $tally -eq 7 ]
+  then
+    echo "good luck"
+  else
+    echo "Best School"
+  fi
+  (( tally++ ))
+done

@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# use until loop to display Best School 10 times
+
+tally=0
+
+until [ $tally -eq 10 ]
+do
+  echo "Best School"
+  (( tally++ ))
+done

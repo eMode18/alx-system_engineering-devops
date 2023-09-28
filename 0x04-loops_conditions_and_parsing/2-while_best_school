@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# Use a while loop to output Best School 10 times
+
+tally=0
+
+while [ $tally -lt 10 ]
+do
+  echo "Best School"
+  (( tally++ ))
+done
