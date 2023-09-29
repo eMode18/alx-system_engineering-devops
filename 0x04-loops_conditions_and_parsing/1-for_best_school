@@ -5,4 +5,3 @@ for (( bs=0; bs<10; bs++ ))
 do
   echo "Best School"
 done
-
