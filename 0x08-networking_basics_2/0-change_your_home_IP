@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# Config ubuntu server
+
+cp /etc/hosts ~/my_host.new
+echo "127.0.0.2		localhost" > ~/my_host.new
+echo "8.8.8.8		facebook.com" >> ~/my_host.new
+cp -f ~/hosts.new /etc/hosts
+
