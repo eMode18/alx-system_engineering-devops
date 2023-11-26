@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# how to generate private pub key pairs using ssh
+
+ssh-keygen -t rsa -b 4096 -P betty -f school
