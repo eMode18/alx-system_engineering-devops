@@ -1,28 +1,24 @@
 #!/usr/bin/env bash
 # copy to server using scp
 
-if [ $# -lt 4 ]
-then
-	echo "Usage: 0-transfer_file PATH_TO_FILE IP USERNAME PATH_TO_SSH_KEY"
-	exit 1
+if [ $# -lt 4 ]; then
+    echo "Usage: 0-transfer_file PATH_TO_FILE IP USERNAME PATH_TO_SSH_KEY"
+    exit 1
 fi
 
-#Initializing variables
-
+# Initializing variables
 path_to_file=$1
 ip=$2
 username=$3
 path_to_ssh_key=$4
 
-#disable strict key check
-
+# Disable strict key check
 scp -o "StrictHostKeyChecking=no" -i "$path_to_ssh_key" "$path_to_file" "$username@$ip:~/"
 
-#transfer status
-
-if [$? -eq 0 ]
-then
-	echo "FILE TRANSFER SUCCESSFUL"
+# Transfer status
+if [ $? -eq 0 ]; then
+    echo "FILE TRANSFER SUCCESSFUL"
 else
-	echo "TRANFER FAILED"
+    echo "TRANSFER FAILED"
 fi
+
