@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# 301 redirections
+
+sudo apt-get update
+sudo apt-get install -y nginx
+
+echo "Hello world!" | sudo tee /var/www/html/index.html
+
+string_for_replacement="server_name _;\n\trewrite ^\/redirect_me https:\/\/github.com\/eMode18 permanent;"
+sudo sed -i "s/server_name _;/$string_for_replacement/" /etc/nginx/sites-enabled/default
+
+sudo service nginx restart
