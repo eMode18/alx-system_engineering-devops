@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# Start Apache Server
+
+echo "Hello Holberton" > /var/www/html/index.html
+#check server status
+sudo service apache2 status
+
+#restart server
+service apache2 restart
