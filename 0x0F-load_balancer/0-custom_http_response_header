@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# config web-02 as web-01 while implementing HTTP respose header
+
+sudo apt-get update
+sudo apt-get install -y nginx
+
+echo "Hello world!" | sudo tee /var/www/html/index.html
+
+header_string="server_name _;\n\trewrite ^\/redirect_me https:\/\/github.com\/eMode18 permanent;"
+
+sudo sed -i "s/server_name _;$header_string/" /etc/nginx/sites-enabled/default
+
+echo " Ceci n'est pas une page"| sudo tee /var/www/html/404.html
+
+sudo sed -i "server_name _;/a add_header X-Served-By $HOSTNAME;" /etc/nginx/sites-enabled/default
+
+sudo nginx -t
+
+sudo service nginx restart
