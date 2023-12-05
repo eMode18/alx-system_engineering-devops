@@ -1,0 +1,52 @@
+#!/bin/bash
+
+# Check if the user has sudo privileges
+if [ "$EUID" -ne 0 ]; then
+  echo "Please run as root or using sudo"
+  exit 1
+fi
+
+# Install HAProxy
+apt-get update
+apt-get install -y haproxy
+
+# Configure HAProxy
+cat <<EOF > /etc/haproxy/haproxy.cfg
+global
+    log /dev/log local0
+    log /dev/log local1 notice
+    chroot /var/lib/haproxy
+    stats socket /run/haproxy/admin.sock mode 660 level admin
+    stats timeout 30s
+    user haproxy
+    group haproxy
+    daemon
+
+defaults
+    log global
+    mode http
+    option httplog
+    option dontlognull
+    timeout connect 5000ms
+    timeout client 50000ms
+    timeout server 50000ms
+
+frontend http_front
+    bind *:80
+    default_backend http_back
+
+backend http_back
+    balance roundrobin
+    server web-01 100.26.173.127-web-01:80 check
+    server web-02 100.26.209.143-web-02:80 check
+EOF
+
+# Enable HAProxy init script
+sed -i 's/ENABLED=0/ENABLED=1/' /etc/default/haproxy
+
+# Restart HAProxy service
+service haproxy restart
+
+# Verify HAProxy status
+service haproxy status
+
