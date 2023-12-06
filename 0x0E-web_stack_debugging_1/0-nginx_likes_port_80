@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# fix port issue failure
+
+rm /etc/nginx/sites-enabled/default
+
+# make the fix via symbolic link
+ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
+
+service nginx restart
