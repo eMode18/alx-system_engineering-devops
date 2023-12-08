@@ -1,18 +1,24 @@
 #!/usr/bin/env bash
 # Show the  information regarding subdomains.
 
-info_domains () {
-    line=$(dig "$2"."$1" | grep -A1 'ANSWER SECTION:' | tr '\t' '\n' | tail -2 | tr '\n' ' ')
-    echo "$2 $line" | awk '{print "The subdomain " $1 " is a " $2 " record and points to " $3}'
+info_domain() {
+    result=$(dig +short "$2"."$1")
+    if [ -z "$result" ]; then
+        echo "No information found for $2.$1"
+    else
+        echo "The subdomain $2 is a A record and points to $result"
+    fi
 }
 
-if [ "$#" == 1 ]
-then
-  info_domains "$1" "www"
-  info_domains "$1" "lb-01"
-  info_domains "$1" "web-01"
-  info_domains "$1" "web-02"
-elif [ "$#" == 2 ]
-then
-  info_domains "$1" "$2"
+# Main script
+if [ "$#" -eq 1 ]; then
+    domain="$1"
+    info_domain "$domain" "www"
+    info_domain "$domain" "lb-01"
+    info_domain "$domain" "web-01"
+    info_domain "$domain" "web-02"
+elif [ "$#" -eq 2 ]; then
+    domain="$1"
+    subdomain="$2"
+    info_domain "$domain" "$subdomain"
 fi
