@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# scrpt to interact with nginx as nginx
+sed -i 's/#user\s*www-data;/user nginx;/' /etc/nginx/nginx.conf
+sed -i 's/listen\s*80;/listen 8080;/' /etc/nginx/sites-available/default
+chmod 640 /etc/nginx/nginx.conf
+if pgrep apache2 >/dev/null; then
+    pkill apache2
+fi
+service nginx start
+
