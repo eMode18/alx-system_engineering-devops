@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 """
 This script retrieves and displays information about an employee's
 TODO list progress

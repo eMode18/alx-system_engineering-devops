@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 """
 This script retrieves and exports information about all employees' TODO lists
 progress from a REST API in JSON format.
