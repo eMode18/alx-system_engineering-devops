@@ -1,47 +1,32 @@
-#!/usr/bin/env python3
-"""
-This script retrieves and displays information about an employee's
-TODO list progress
-from a REST API based on the provided employee ID.
-
-Requirements:
-- Utilizes the requests module
-- Accepts an integer as a parameter (employee ID)
-- Displays the employee's TODO list progress in a specific format
-"""
+#!/usr/bin/python3
+"""Fetches information from JSONPlaceholder API and exports to CSV"""
 
 import requests
-import sys
 import csv
-
-
-def fetch_employee_todo_progress(employee_id):
-    base_url = f"https://jsonplaceholder.typicode.com/users/{employee_id}"
-    t_url = f"https://jsonplaceholder.typicode.com/todos?userId={employee_id}"
-    try:
-        user_response = requests.get(base_url)
-        user_data = user_response.json()
-        employee_name = user_data['name']
-        todos_response = requests.get(t_url)
-        todos_data = todos_response.json()
-        csv_filename = f"{employee_id}.csv"
-        with open(csv_filename, mode='w', newline='') as csvfile:
-            csv_writer = csv.writer(csvfile, delimiter=',', quotechar='"',
-                                    quoting=csv.QUOTE_MINIMAL)
-            csv_writer.writerow(['USER_ID', 'USERNAME',
-                                 'TASK_COMPLETED_STATUS', 'TASK_TITLE'])
-            for todo in todos_data:
-                csv_writer.writerow([employee_id, employee_name,
-                                     todo['completed'], todo['title']])
-        print(f"Data exported to {csv_filename} successfully!")
-    except requests.RequestException as e:
-        print(f"Error: {e}")
-        sys.exit(1)
-
+import sys
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print("Usage: python script.py <employee_id>")
+        print("Usage: python3 script.py <employee_id>")
         sys.exit(1)
-    employee_id = int(sys.argv[1])
-    fetch_employee_todo_progress(employee_id)
+    base_url = "https://jsonplaceholder.typicode.com"
+    tasks_url = f"{base_url}/user/{sys.argv[1]}/todos"
+    user_url = f"{base_url}/users/{sys.argv[1]}"
+    tasks_data = requests.get(tasks_url).json()
+    user_data = requests.get(user_url).json()
+    task_list = []
+    for task in tasks_data:
+        task_info = {
+            "USER_ID": sys.argv[1],
+            "USERNAME": user_data.get("username"),
+            "TASK_COMPLETED_STATUS": str(task.get("completed")),
+            "TASK_TITLE": task.get("title")
+        }
+        task_list.append(task_info)
+    file_name = f"{sys.argv[1]}.csv"
+    with open(file_name, 'w', newline='', encoding='utf-8') as csv_file:
+        header = ["USER_ID", "USERNAME", "TASK_COMPLETED_STATUS", "TASK_TITLE"]
+        csv_writer = csv.DictWriter(csv_file, fieldnames=header,
+                                    quoting=csv.QUOTE_ALL)
+        csv_writer.writeheader()
+        csv_writer.writerows(task_list)
