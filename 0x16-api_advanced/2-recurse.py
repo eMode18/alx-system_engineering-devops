@@ -1,36 +1,41 @@
 #!/usr/bin/python3
+"""
+2-recurse
+"""
 import requests
 
 
-def recurse(subreddit_name, post_list=[], after=None):
-    """
-    Recursively queries the Reddit API and retrieves a list of titles for
-    all hot articles in the specified subreddit.
-    Returns None if the subreddit is invalid or no results are found.
-    """
-    subreddit_url = f"https://www.reddit.com/r/{subreddit_name}/hot.json"
-
-    request_headers = {'User-agent': 'my-bot'}
-    request_params = {'after': after} if after else {}
+def recurse(subreddit, hot_list=[], after=None):
+    posts_url = (
+        f'https://www.reddit.com/r/{subreddit}/'
+        f'hot.json?limit=100&after={after}'
+    )
+    posts_headers = {'User-Agent': 'MyBot/1.0'}
 
     try:
-        api_response = requests.get(subreddit_url, headers=request_headers,
-                                    params=request_params,
-                                    allow_redirects=False)
+        response = requests.get(posts_url, headers=posts_headers,
+                                allow_redirects=False)
+        data = response.json()
 
-        if api_response.status_code == 200:
-            response_data = api_response.json().get('data')
-            after = response_data.get('after')
-            posts = response_data.get('children')
+        for post in data['data']['children']:
+            hot_list.append(post['data']['title'])
 
-            post_list.extend([post.get("data").get("title") for post in posts])
-
-            if after is not None:
-                return recurse(subreddit_name, post_list, after)
-            else:
-                return post_list if post_list else None
-        else:
-            return None
-    except Exception as error:
-        print(f"Error: {error}")
+        next_page = data['data']['after']
+        if next_page:
+            recurse(subreddit, hot_list, after=next_page)
+        return hot_list
+    except (requests.RequestException, KeyError):
         return None
+
+
+if __name__ == '__main__':
+    import sys
+
+    if len(sys.argv) < 2:
+        print("Please pass an argument for the subreddit to search.")
+    else:
+        result = recurse(sys.argv[1])
+        if result is not None:
+            print(len(result))
+        else:
+            print("None")
