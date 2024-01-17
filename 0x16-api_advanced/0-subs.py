@@ -1,26 +1,33 @@
 #!/usr/bin/python3
-"""
-0-subs
+"""Retrieve the subscriber count for a specific subreddit by querying the
+Reddit API.
+
+Args:
+    subreddit (str): The name of the subreddit.
+
+Returns:
+    int: The number of subscribers for the specified subreddit, or 0 if the
+    subreddit is not found or there is an issue with the API request.
 """
 import requests
 
 
 def number_of_subscribers(subreddit):
-    subreddit_url = f'https://www.reddit.com/r/{subreddit}/about.json'
-    subreddit_headers = {'User-Agent': 'MyBot/1.0'}
-    try:
-        response = requests.get(subreddit_url, headers=subreddit_headers,
-                                allow_redirects=False)
+    """Retrieve the subscriber count for a specific subreddit by querying the
+    Reddit API.
+
+    Args:
+        subreddit (str): The name of the subreddit.
+
+    Returns:
+        int: The number of subscribers for the specified subreddit, or 0 if the
+        subreddit is not found or there is an issue with the API request.
+    """
+    api_link = 'https://www.reddit.com/r/{}/about.json'.format(subreddit)
+    res_headers = {'User-Agent': 'My User Agent 1.0'}
+    response = requests.get(api_link, res_headers=res_headers)
+    if response.status_code == 200:
         data = response.json()
-        return data['data']['subscribers']
-    except (requests.RequestException, KeyError):
-        return 0
-
-
-if __name__ == '__main__':
-    import sys
-
-    if len(sys.argv) < 2:
-        print("Please pass an argument for the subreddit to search.")
+        return data.get('data').get('subscribers')
     else:
-        print("{:d}".format(number_of_subscribers(sys.argv[1])))
+        return 0

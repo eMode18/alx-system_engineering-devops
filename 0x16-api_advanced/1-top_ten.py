@@ -1,28 +1,39 @@
 #!/usr/bin/python3
-"""
-1-top_ten
+"""Retrieve and print the titles of the first 10 hot posts for a specified
+subreddit by querying the Reddit API.
+
+Args:
+    subreddit (str): The name of the subreddit.
+
+Prints:
+    The titles of the first 10 hot posts for the specified subreddit, or
+    "None" if there is an issue with the API request or no posts are found.
 """
 import requests
+import sys
 
 
 def top_ten(subreddit):
-    posts_url = f'https://www.reddit.com/r/{subreddit}/hot.json?limit=10'
-    posts_headers = {'User-Agent': 'MyBot/1.0'}
+    """Retrieve and print the titles of the first 10 hot posts for a specified
+    subreddit by querying the Reddit API.
 
+    Args:
+        subreddit (str): The name of the subreddit.
+
+    Prints:
+        The titles of the first 10 hot posts for the specified subreddit, or
+        "None" if there is an issue with the API request or no posts are found.
+    """
+    api_link = "https://www.reddit.com/r/{}/hot.json".format(subreddit)
+    res_headers = {'User-Agent': 'Mozilla/5.0'}
     try:
-        response = requests.get(posts_url, headers=posts_headers,
+        response = requests.get(api_link, res_headers=res_headers,
                                 allow_redirects=False)
-        data = response.json()
-        for post in data['data']['children']:
-            print(post['data']['title'])
-    except (requests.RequestException, KeyError):
-        print(None)
-
-
-if __name__ == '__main__':
-    import sys
-
-    if len(sys.argv) < 2:
-        print("Please pass an argument for the subreddit to search.")
-    else:
-        top_ten(sys.argv[1])
+        if response.status_code == 200:
+            node = response.json().get('data').get('node')
+            for i in range(10):
+                print(node[i].get('data').get('title'))
+        else:
+            print("None")
+    except Exception:
+        print("None")
