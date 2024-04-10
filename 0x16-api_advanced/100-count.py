@@ -14,7 +14,7 @@ def count_words(subreddit, word_list, next_page=None, word_counts={}):
     if not word_list or not subreddit:
         return
 
-    url = f"https://www.reddit.com/r/{subreddit}/hot.json"
+    url = "https://www.reddit.com/r/{}/hot.json".format(subreddit)
     headers = {"User-Agent": "Mozilla/5.0"}
 
     params = {"limit": 100}
@@ -47,4 +47,4 @@ def count_words(subreddit, word_list, next_page=None, word_counts={}):
         sorted_counts = sorted(word_counts.items(),
                                key=lambda x: (-x[1], x[0].lower()))
         for word, count in sorted_counts:
-            print(f"{word.lower()}: {count}")
+            print("{}: {}".format(word.lower(), count))
