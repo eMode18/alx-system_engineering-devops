@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Script to connect to the server
+
+# Start ssh-agent and add key
+eval "$(ssh-agent -s)"
+if ! ssh-add /alx-system_engineering-devops/school; then
+    echo "Failed to add SSH key. Exiting."
+    exit 1
+fi
+
+# Connect to the server
+ssh ubuntu@18.207.236.145
