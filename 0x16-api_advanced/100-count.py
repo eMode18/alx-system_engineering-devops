@@ -1,50 +1,50 @@
 #!/usr/bin/python3
 """
-Recursive function to query the Reddit API, parse the titles of
-all hot articles, and print a sorted count of given keywords.
+Function to tally occurrences of specified words in titles of
+hot posts of a Reddit subreddit.
 """
-
 import requests
 
 
-def count_words(subreddit, word_list, after=None, counts=None):
+def count_words(subreddit, word_list, next_page=None, word_counts={}):
     """
-    Count occurrences of keywords in titles of hot articles in a subreddit.
-    Args:
-        subreddit (str): The name of the subreddit to search.
-        word_list (list): List of keywords to count occurrences of.
-        after (str, optional): Parameter used for pagination in Reddit API.
-        counts (dict, optional): Dictionary to store keyword counts.
+    Recursively queries the Reddit API for hot posts, parses their titles,
+    and prints a sorted count of specified keywords found in the titles.
+    """
+    if not word_list or not subreddit:
+        return
 
-    Prints:
-        Sorted count of keywords in descending order of occurrences.
-    """
-    if counts is None:
-        counts = {}
-    if not word_list:
-        sorted_counts = sorted(counts.items(), key=lambda x: (-x[1], x[0]))
+    url = f"https://www.reddit.com/r/{subreddit}/hot.json"
+    headers = {"User-Agent": "Mozilla/5.0"}
+
+    params = {"limit": 100}
+    if next_page:
+        params["after"] = next_page
+
+    response = requests.get(url,
+                            headers=headers,
+                            params=params,
+                            allow_redirects=False)
+
+    if response.status_code != 200:
+        return
+
+    data = response.json()
+    children = data["data"]["children"]
+
+    for post in children:
+        title = post["data"]["title"].lower()
+        for word in word_list:
+            if word.lower() in title:
+                word_counts[word] = (
+                    word_counts.get(word, 0) +
+                    title.count(word.lower())
+                )
+    next_page = data["data"]["after"]
+    if next_page:
+        count_words(subreddit, word_list, next_page, word_counts)
+    else:
+        sorted_counts = sorted(word_counts.items(),
+                               key=lambda x: (-x[1], x[0].lower()))
         for word, count in sorted_counts:
             print(f"{word.lower()}: {count}")
-        return
-    if word_list:
-        word = word_list.pop()
-        url = f"https://www.reddit.com/r/{subreddit}/hot.json"
-        headers = {"User-Agent": "Mozilla/5.0"}
-        params = {"limit": 100, "after": after}
-        response = requests.get(url, headers=headers, params=params,
-                                allow_redirects=False)
-
-        if response.status_code == 200:
-            data = response.json()
-            posts = data['data']['children']
-            for post in posts:
-                title = post['data']['title']
-                if word.lower() in title.lower().split():
-                    counts[word.lower()] = counts.get(word.lower(), 0) + 1
-
-            # Recursive call to count words with the remaining word_list
-            after = data['data']['after']
-            count_words(subreddit, word_list, after, counts)
-        else:
-            print("Invalid subreddit or no posts match.")
-            return

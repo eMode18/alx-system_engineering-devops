@@ -1,33 +1,25 @@
 #!/usr/bin/python3
-"""Retrieve the subscriber count for a specific subreddit by querying the
-Reddit API.
-
-Args:
-    subreddit (str): The name of the subreddit.
-
-Returns:
-    int: The number of subscribers for the specified subreddit, or 0 if the
-    subreddit is not found or there is an issue with the API request.
+"""
+A utility to fetch subscriber count for specified Reddit communities.
 """
 import requests
 
 
 def number_of_subscribers(subreddit):
-    """Retrieve the subscriber count for a specific subreddit by querying the
-    Reddit API.
-
-    Args:
-        subreddit (str): The name of the subreddit.
-
-    Returns:
-        int: The number of subscribers for the specified subreddit, or 0 if the
-        subreddit is not found or there is an issue with the API request.
     """
-    api_link = 'https://www.reddit.com/r/{}/about.json'.format(subreddit)
-    res_headers = {'User-Agent': 'My User Agent 1.0'}
-    response = requests.get(api_link, res_headers=res_headers)
+    Fetches and returns the subscriber count for a specific subreddit.
+    Parameters:
+    - subreddit (str): The subreddit for which to retrieve subscriber count.
+    Returns:
+    - int: The number of subscribers. Returns 0 if subreddit 
+    is not found or on error.
+    """
+    url = f"https://www.reddit.com/r/{subreddit}/about.json"
+    headers = {"User-Agent": "eMode18"}
+    response = requests.get(url, headers=headers, allow_redirects=False)
     if response.status_code == 200:
-        data = response.json()
-        return data.get('data').get('subscribers')
+        response_data = response.json()
+        sub_count = response_data['data']['subscribers']
+        return sub_count
     else:
         return 0
