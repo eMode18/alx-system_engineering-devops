@@ -9,4 +9,4 @@ if ! ssh-add /alx-system_engineering-devops/school; then
 fi
 
 # Connect to the server
-ssh ubuntu@18.207.236.145
+ssh ubuntu@18.210.17.139
