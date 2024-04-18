@@ -11,32 +11,10 @@ server {
 
         add_header X-Served-By 265092-web-01;
 
-        #root /var/www/html;
-
-        #Serve /airbnb-onepage/ route from AirBnB_clone_v2
-        location = /airbnb-onepage/ {
-                proxy_pass https://127.0.0.1:5000/airbnb-onepage/;
-        }
-
-        #Serve /number_odd_or_even/
-
-        location ~ /airbnb-dynamic/number_odd_or_even/(\d+)$ {
-                proxy_pass https://127.0.0.1:5001/number_odd_or_even/$1;
-        }
 
         #Airbnb_v3 api served from here
         location /api {
                 proxy_pass https://127.0.0.1:5002/api;
-        }
-        #use /2-hbnb as root location
-        location / {
-                proxy_pass https://127.0.0.1:5003/2-hbnb;
-        }
-
-        #Server static AirBnb_v4 page
-
-        location /static {
-                alias web_dynamic/static/;
         }
 
         error_page 404 /404.html;
